@@ -1,113 +1,120 @@
+'use client'
 import Image from "next/image";
+import background from "../public/myBg.jpg"
+import { useCallback, useEffect, useState, useRef } from "react";
+
 
 export default function Home() {
+
+  let [length, setLength] = useState(8);
+  let [numberAllowed, setNumberAllowed] = useState(false);
+  let [charAllowed, setCharAllowed] = useState(false);
+  let [password, setPassword] = useState ("");
+
+  let passwordGenerator = useCallback(()=>{
+    let myPass:any = "";
+    let textInput = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    if(numberAllowed) textInput += "1234567890";
+    if(charAllowed) textInput += "!@#$%^&*";
+
+    for(let i = 1; i <= length; i++){
+      let randomNumber = Math.floor(Math.random() * textInput.length + 1);
+      myPass += textInput.charAt(randomNumber);
+    }
+    setPassword(myPass);
+  }, [length, numberAllowed, charAllowed, setPassword])
+
+  useEffect(()=>{
+    passwordGenerator()
+  }, [length, numberAllowed, charAllowed, passwordGenerator]);
+
+
+  // take password data
+  let passwordRef: any = useRef(null);
+
+  // Copy password to Clipboard
+  let copyPasswordToClipbaord = useCallback(()=>{
+    passwordRef.current?.select();
+    window.navigator.clipboard.writeText(password);
+  }, [password])
+
+
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
+    <div className="relative w-full flex items-center justify-center h-screen">
+
+      {/* Background Image */}
+      <div className="absolute w-full -z-10">
+        <Image className="w-full h-screen opacity-60"
+         alt="Image" src={background} height={1000} width={1000} />
       </div>
 
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
+
+      {/* Text Container */}
+      <div className="containerBg p-2 lg:p-10 rounded shadow-lg shadow-green-800
+      text-slate-300 flex flex-col gap-5 lg:gap-10
+      ">
+      {/* headings */}
+      <h1 className="lg:text-6xl text-xl text-center">IB Coding School</h1>
+      <h2 className="lg:text-4xl text-center">Password Generator</h2>
+
+      {/* input & copy */}
+      <div className="flex gap-1">
+      <input value={password}
+      ref={passwordRef}
+      className=" rounded-l w-full outline-none text-black p-2 text-sm lg:text-2xl"
+      type="text"/> 
+      <button
+      onClick={copyPasswordToClipbaord}
+       className="bg-blue-800 px-1 lg:px-3 rounded-r hover:bg-blue-950
+      text-sm items-center cursor-pointer"
+      >Copy</button>
+
       </div>
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+      {/* length, number & character */}
+      <div className="flex justify-between flex-col lg:flex-row gap-3">
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+      {/* length */}
+      <div className="flex items-center flex-col lg:flex-row w-[60%] gap-1">
+      <input 
+      onChange={(e: any)=> setLength(e.target.value)}
+      min={8}
+      max={20}
+      type="range" className="cursor-pointer"/> 
+      <label className="text-sm lg:text-xl">Length: {length}</label>
       </div>
-    </main>
+
+
+      {/* number */}
+      <div className="flex gap-1 items-center">
+      <input 
+      defaultChecked={numberAllowed}
+      onChange={()=> setNumberAllowed((perv)=> !perv)}
+      className="scale-150 cursor-pointer"
+      type="checkbox" id="number" /> 
+      <label className="text-lg" htmlFor="number">Numbers</label>
+      </div>
+
+
+      {/* character */}
+      <div className="flex gap-2 items-center">
+      <input 
+      defaultChecked={charAllowed}
+      onChange={()=> setCharAllowed((perv)=> !perv )}
+      className="scale-150 cursor-pointer" type="checkbox"  id="character" /> 
+      <label className="text-lg" htmlFor="character">Characters</label>
+      </div>
+
+      </div>
+
+
+      </div>
+
+
+
+
+    </div>
   );
 }
